@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import Slider from "react-slick";
 import Image from "next/image";
+import Link from "next/link";
 import Layout from "@/components/Layout";
 
 export default function Home() {
@@ -28,6 +29,24 @@ export default function Home() {
         "Strategies to reduce emissions and ensure cleaner, healthier air.",
       image: "/images/air.jpg",
       link: "/services/air-pollution",
+    },
+  ];
+
+  // 👇 Blog posts (same as in /blog/page.tsx)
+  const posts = [
+    {
+      id: 1,
+      title: "5 Simple Ways to Improve Air Quality at Home",
+      excerpt: "Learn how small changes can make your indoor air healthier...",
+      date: "2025-09-30",
+      slug: "improve-air-quality",
+    },
+    {
+      id: 2,
+      title: "The Importance of Clean Water in Daily Life",
+      excerpt: "Water purity affects more than just taste — here’s why...",
+      date: "2025-09-25",
+      slug: "clean-water-daily-life",
     },
   ];
 
@@ -87,6 +106,39 @@ export default function Home() {
             </div>
           ))}
         </Slider>
+      </section>
+
+      {/* Blog Section */}
+      <section className="mt-16 max-w-6xl mx-auto px-4">
+        <h2 className="text-3xl font-bold text-green-700 mb-8 text-center">
+          Latest Blog Posts
+        </h2>
+        <div className="grid md:grid-cols-2 gap-8">
+          {posts.slice(0, 2).map((post) => (
+            <Link
+              key={post.id}
+              href={`/blog/${post.slug}`}
+              className="block p-6 rounded-xl bg-white shadow hover:shadow-lg 
+                         transition-all border border-gray-100 hover:border-green-200"
+            >
+              <h3 className="text-2xl font-semibold text-green-800 mb-2">
+                {post.title}
+              </h3>
+              <p className="text-gray-600 mb-2">{post.excerpt}</p>
+              <p className="text-sm text-gray-400">{post.date}</p>
+            </Link>
+          ))}
+        </div>
+
+        <div className="text-center mt-8">
+          <Link
+            href="/blog"
+            className="inline-block px-6 py-2 rounded-full bg-green-600 
+                       text-white hover:bg-green-700 transition"
+          >
+            View All Posts →
+          </Link>
+        </div>
       </section>
     </Layout>
   );
