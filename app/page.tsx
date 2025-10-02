@@ -1,12 +1,13 @@
 "use client";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Slider from "react-slick";
 import Image from "next/image";
 import Link from "next/link";
 import Layout from "@/components/Layout";
 
 export default function Home() {
   const router = useRouter();
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const services = [
     {
@@ -32,7 +33,6 @@ export default function Home() {
     },
   ];
 
-  // 👇 Blog posts (same as in /blog/page.tsx)
   const posts = [
     {
       id: 1,
@@ -50,19 +50,13 @@ export default function Home() {
     },
   ];
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 600,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 4000,
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 640, settings: { slidesToShow: 1 } },
-    ],
-  };
+  // Auto-slide for mobile
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % services.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [services.length]);
 
   return (
     <Layout>
@@ -77,35 +71,93 @@ export default function Home() {
         </p>
       </section>
 
-      {/* Services Slider */}
-      <section className="mt-12 relative">
+      {/* Services Section */}
+      <section className="mt-12 relative px-4 max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold text-center text-green-700 mb-8">
           Our Services
         </h2>
 
-        <Slider {...settings}>
-          {services.map((service) => (
+        {/* Desktop Grid */}
+        <div className="hidden md:grid md:grid-cols-3 gap-8">
+          {services.map((service, index) => (
             <div
-              key={service.title}
-              className="px-4 cursor-pointer"
+              key={index}
+              className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition p-6 text-center cursor-pointer"
               onClick={() => router.push(service.link)}
             >
-              <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition p-6 text-center">
-                <Image
-                  src={service.image}
-                  alt={service.title}
-                  width={600}
-                  height={400}
-                  className="rounded-md mx-auto mb-4 object-cover h-64 w-full"
-                />
-                <h3 className="text-xl font-semibold text-green-700 mb-2">
-                  {service.title}
-                </h3>
-                <p className="text-gray-600">{service.description}</p>
-              </div>
+              <Image
+                src={service.image}
+                alt={service.title}
+                width={600}
+                height={400}
+                className="rounded-md mx-auto mb-4 object-cover h-64 w-full"
+              />
+              <h3 className="text-xl font-semibold text-green-700 mb-2">
+                {service.title}
+              </h3>
+              <p className="text-gray-600">{service.description}</p>
             </div>
           ))}
-        </Slider>
+        </div>
+
+        {/* Mobile Slider */}
+        <div className="block md:hidden relative overflow-hidden rounded-xl">
+          <div
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {services.map((service, index) => (
+              <div
+                key={index}
+                className="flex-shrink-0 w-full cursor-pointer px-2"
+                onClick={() => router.push(service.link)}
+              >
+                <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition p-6 text-center">
+                  <Image
+                    src={service.image}
+                    alt={service.title}
+                    width={600}
+                    height={400}
+                    className="rounded-md mx-auto mb-4 object-cover h-64 w-full"
+                  />
+                  <h3 className="text-xl font-semibold text-green-700 mb-2">
+                    {service.title}
+                  </h3>
+                  <p className="text-gray-600">{service.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Indicators */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+            {services.map((_, index) => (
+              <button
+                key={index}
+                className={`w-3 h-3 rounded-full ${
+                  index === currentSlide ? "bg-green-700" : "bg-white/50"
+                }`}
+                onClick={() => setCurrentSlide(index)}
+              />
+            ))}
+          </div>
+
+          {/* Controls */}
+          <button
+            onClick={() =>
+              setCurrentSlide((prev) => (prev - 1 + services.length) % services.length)
+            }
+            className="absolute top-0 left-0 h-full px-3 flex items-center justify-center cursor-pointer text-2xl font-bold text-green-700"
+          >
+            ◀
+          </button>
+          <button
+            onClick={() => setCurrentSlide((prev) => (prev + 1) % services.length)}
+            className="absolute top-0 right-0 h-full px-3 flex items-center justify-center cursor-pointer text-2xl font-bold text-green-700"
+          >
+            ▶
+          </button>
+        </div>
       </section>
 
       {/* Blog Section */}
@@ -118,8 +170,7 @@ export default function Home() {
             <Link
               key={post.id}
               href={`/blog/${post.slug}`}
-              className="block p-6 rounded-xl bg-white shadow hover:shadow-lg 
-                         transition-all border border-gray-100 hover:border-green-200"
+              className="block p-6 rounded-xl bg-white shadow hover:shadow-lg transition-all border border-gray-100 hover:border-green-200"
             >
               <h3 className="text-2xl font-semibold text-green-800 mb-2">
                 {post.title}
@@ -133,8 +184,7 @@ export default function Home() {
         <div className="text-center mt-8">
           <Link
             href="/blog"
-            className="inline-block px-6 py-2 rounded-full bg-green-600 
-                       text-white hover:bg-green-700 transition"
+            className="inline-block px-6 py-2 rounded-full bg-green-600 text-white hover:bg-green-700 transition"
           >
             View All Posts →
           </Link>
