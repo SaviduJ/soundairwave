@@ -35,7 +35,7 @@ export default function Contacts() {
         <div className="bg-gradient-to-b from-green-50 to-blue-50 p-8 rounded-xl shadow-md flex flex-col justify-center space-y-4">
           <h2 className="text-2xl font-semibold text-green-700">Get in Touch</h2>
           <p className="text-gray-600">We’d love to hear from you! Reach out using the form or via the details below.</p>
-          <p className="text-gray-700">📍 Colombo, Sri Lanka</p>
+          <p className="text-gray-700">📍 638/1 Govinna Mawatha Athurugiriya,Sri Lanka</p>
           <p className="text-gray-700">📞 +94 77 123 4567</p>
           <p className="text-gray-700">📧 info@soundairwater.com</p>
         </div>
